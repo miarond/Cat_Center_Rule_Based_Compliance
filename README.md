@@ -4,6 +4,19 @@ In Catalyst Center v3.1.5 and above, the new Rule-Based Compliance policy featur
 
 In this repository, we will describe the functionality, limitations, and detail specific example policies to help you understand how to leverage Rules-Based Compliance in your own Catalyst Center environment.
 
+## Table of Contents
+
+- [Requirements & Limitations](#requirements--limitations)
+- [Structure of a Rule-Based Compliance Policy](#structure-of-a-rule-based-compliance-policy)
+- [Component Deep Dive](#component-deep-dive)
+  - [Rules](#rules)
+  - [Variables](#variables)
+    - [String](#string)
+
+[⤴️ ToC](#table-of-contents)
+
+---
+
 ## Requirements & Limitations
 
 - Catalyst Center v3.1.5 or greater
@@ -18,6 +31,10 @@ Recommended capacity limitations:
 | Conditions | 25,000 (avg 5 per rule) | Max 10 per Rule |
 
 > *[Catalyst Center User Guide](https://www.cisco.com/c/en/us/td/docs/cloud-systems-management/network-automation-and-management/catalyst-center/3-1-x/user_guide/b_cisco_catalyst_center_user_guide_3_1_x/m-configure-rule-based-compliance-policies.html#_35e9d03a-1db5-4fff-a64c-e3c1fae1dbda)*
+
+[⤴️ ToC](#table-of-contents)
+
+---
 
 ## Structure of a Rule-Based Compliance Policy
 
@@ -42,6 +59,10 @@ Below is a diagram depicting the relationship of each of the components of a Rul
   - **Device properties:** A small list of known device properties, which Catalyst Center has stored.
   - **Previously matched blocks:** A very powerful feature that allows Catalyst Center to capture the block of text matched in a previous condition and use that as input for the next condition check.
 
+[⤴️ ToC](#table-of-contents)
+
+---
+
 ## Component Deep Dive
 
 ### Rules
@@ -57,6 +78,10 @@ When creating a new Rule under a Policy, the following fields are available for 
 - **Device Series** & **Device Model:** Select specific device model series groups, or even specific device models to more granularly control what devices this Rule should apply to.
 
 Once you've completed the necessary fields to create your Rule, you can then begin adding Conditions and, optionally, Variables.
+
+[⤴️ ToC](#table-of-contents)
+
+---
 
 ### Variables
 
@@ -85,5 +110,13 @@ As mentioned above, there are several Data Types that you can choose from when c
 
 Many of these Data Types have additional configuration parameters that are relevant certain types, so we'll cover those in detail below:
 
+[⤴️ ToC](#table-of-contents)
+
+---
+
 #### String
 
+
+[⤴️ ToC](#table-of-contents)
+
+---
