@@ -108,7 +108,7 @@ As mentioned above, there are several Data Types that you can choose from when c
 - Can only contain letters, numbers or underscores
 - Can be a maximum of 51 characters in length
 
-Many of these Data Types have additional configuration parameters that are relevant certain types, so we'll cover those in detail below:
+Many of these Data Types have additional configuration parameters that are relevant certain types, so we'll cover those in detail below.
 
 [⤴️ ToC](#table-of-contents)
 
@@ -116,6 +116,12 @@ Many of these Data Types have additional configuration parameters that are relev
 
 #### String
 
+In addition to a Variable name and Identifier (and optional Description), String Variables have the following configuration options:
+
+- **Input required:** A checkbox option which dictates whether the variable MUST have a value (checked) before you can save your changes, or if it can remain blank (unchecked).  Whether or not you check this box, you can still define site-specific values for this variable on the Policy configuration screen:
+  - ![site-specific_variables_button.png](/assets/site-specific_variables_button.png)
+- **Is list of values:** A checkbox option which, when checked, will create a single-select dropdown box for the variable and populate it with only the specific values you define.
+- **Accept multiple values:** Checking this checkbox will convert a dropdown box (from the option above) to a multi-select dropdown, or if the option above is NOT selected, multiple values can be entered in freeform text boxes.
 
 [⤴️ ToC](#table-of-contents)
 
