@@ -4,7 +4,7 @@ In Catalyst Center v3.1.5 and above, the new Rule-Based Compliance policy featur
 
 In this repository, we will describe the functionality, limitations, and detail specific example policies to help you understand how to leverage Rules-Based Compliance in your own Catalyst Center environment.
 
-## Table of Contents
+# Table of Contents
 
 - [Requirements & Limitations](#requirements--limitations)
 - [Structure of a Rule-Based Compliance Policy](#structure-of-a-rule-based-compliance-policy)
@@ -12,12 +12,18 @@ In this repository, we will describe the functionality, limitations, and detail 
   - [Rules](#rules)
   - [Variables](#variables)
     - [String](#string)
+    - [Integer](#integer)
+    - [Boolean](#boolean)
+    - [IP Address](#ip-address)
+    - [Interface](#interface)
+    - [IP Mask](#ip-mask)
+  - [Conditions](#conditions)
 
 [⤴️ ToC](#table-of-contents)
 
 ---
 
-## Requirements & Limitations
+# Requirements & Limitations
 
 - Catalyst Center v3.1.5 or greater
 
@@ -36,7 +42,7 @@ Recommended capacity limitations:
 
 ---
 
-## Structure of a Rule-Based Compliance Policy
+# Structure of a Rule-Based Compliance Policy
 
 Rule-Based Compliance Polices are constructed in a modular format, which consists of a top-level Policy containing one or more compliance Rules.  Each rule contains one or more Conditions which define the configuration "signatures" to check for and the action to take.
 
@@ -48,7 +54,7 @@ Below is a diagram depicting the relationship of each of the components of a Rul
 - **Rule:** A Rule is the first container level inside a Policy.  Rules are used to group together individual Conditions (specific configuration signature checks) and relate them to one or more Device families (Routers, Switches & Hubs, or even specific device model numbers) and Software platforms (IOS, IOS XE, etc.).
 - **Variable:** Rules may contain zero or more Variables, which can be referenced inside multiple Conditions.  Variables can be one of the following data types:
   - **String:** A string of alpha-numeric text, treated as plain text.
-  - **Integer:** A whole number, positive or negative.
+  - **Integer:** A positive whole number, between `0` and `2,147,483,647` (31 bits).
   - **Boolean:** A binary value which can be either `True` or `False`.
   - **IP address:** A valid IPv4 address between `0.0.0.0` and `255.255.255.255`.
   - **Interface:** A string of text representing the expanded full name of a device interface, along with any module/slot/port numbers.  DO NOT use IOS abbreviations for interface names because they will not match the contents of a device's running configuration.  Also, ensure that the correct expanded full name of the interface is used; some interface names are abbreviated for length in IOS XE (ex: TwentyFiveGigE, HundredGigE). [IOS XE Interface Command Reference](https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9600/software/release/17-15/command_reference/b_1715_9600_cr/interface_and_hardware_commands.html#wp1054269631)
@@ -63,9 +69,9 @@ Below is a diagram depicting the relationship of each of the components of a Rul
 
 ---
 
-## Component Deep Dive
+# Component Deep Dive
 
-### Rules
+## Rules
 
 When creating a new Rule under a Policy, the following fields are available for you to populate:
 
@@ -83,7 +89,7 @@ Once you've completed the necessary fields to create your Rule, you can then beg
 
 ---
 
-### Variables
+## Variables
 
 Variables allow you to create placeholders which can be referenced in multiple Condition statements.  Variables can be configured as one of several Data Types, which allow you to control what values are allowed to be stored in a Variable.
 
@@ -108,13 +114,11 @@ As mentioned above, there are several Data Types that you can choose from when c
 - Can only contain letters, numbers or underscores
 - Can be a maximum of 51 characters in length
 
-Many of these Data Types have additional configuration parameters that are relevant certain types, so we'll cover those in detail below.
+Many of these Data Types have additional configuration parameters that are relevant to certain types, so we'll cover those in detail below.
 
 [⤴️ ToC](#table-of-contents)
 
----
-
-#### String
+### String
 
 In addition to a Variable name and Identifier (and optional Description), String Variables have the following configuration options:
 
@@ -122,7 +126,96 @@ In addition to a Variable name and Identifier (and optional Description), String
   - ![site-specific_variables_button.png](/assets/site-specific_variables_button.png)
 - **Is list of values:** A checkbox option which, when checked, will create a single-select dropdown box for the variable and populate it with only the specific values you define.
 - **Accept multiple values:** Checking this checkbox will convert a dropdown box (from the option above) to a multi-select dropdown, or if the option above is NOT selected, multiple values can be entered in freeform text boxes.
+- **Default value:** The default value for the string, if no other value is provided.
+- **Maximum length:** Limits the string to X number of characters in length.  ***The maximum length accepted is 255 characters.***
+- **Valid regex:** A Regular Expression that is used to validate String input values.  This option can be used to ensure that input values contain only acceptable characters or conform to a specific pattern.  *We will cover Regular Expressions in detail later in this guide.*
+
+### Integer
+
+Integer data types have the same options available as String data types, with the following caveats:
+
+- **Default, Minimum and Maximum value:** These fields only accept positive whole numbers between `0` and `2,147,483,647` (31 bits).
+- **Valid regex:** This option is *NOT* available because Regular Expressions are only used for string matching.
+
+### Boolean
+
+Boolean data types only have two options: **Input required** and **Is list of values**.  These two options have the same effect as detailed in the String section above.
+
+### IP Address
+
+IP Address data types have only three options: **Input required**, **Accept multiple values** and **Default value**.  All inputs will be checked automatically to ensure they are valid IPv4 addresses.
+
+### Interface
+
+Interface data types are treated as Strings and have the three following options: **Input required**, **Accept multiple values** and **Default value**.  The "Default value" field and any inputs created when "Accept multiple values" is checked must adhere to the following validation rules:
+
+- First character must be a letter
+- Length must be 2 or more characters
+- No special characters are allowed, with the exception of: `/` `-` `_`
+- All forward slashes (`/`) must be proceeded AND followed by numerical digits only.  For example:
+  - Valid: `GigabitEthernet1/0/1`
+  - Invalid: `GigabitEthernet/0/B`
+
+### IP Mask
+
+An IP Mask data type is just a Subnet Mask in IPv4 format.  "IP mask" data types must be formatted exactly like "IP address" data types however, the Subnet Mask must be one of the following values:
+
+```
+255.0.0.0
+255.128.0.0
+255.192.0.0
+255.224.0.0
+255.240.0.0
+255.248.0.0
+255.252.0.0
+255.254.0.0
+255.255.0.0
+255.255.128.0
+255.255.192.0
+255.255.224.0
+255.255.240.0
+255.255.248.0
+255.255.252.0
+255.255.254.0
+255.255.255.0
+255.255.255.128
+255.255.255.192
+255.255.255.224
+255.255.255.240
+255.255.255.248
+255.255.255.252
+```
 
 [⤴️ ToC](#table-of-contents)
 
 ---
+
+## Conditions
+
+Conditions are the heart of a Rule-Based Compliance Policy in Catalyst Center.  They allow you to parse the text contained in whatever Scope you choose as your input, search for string patterns that you define, and take action based on the results.  Conditions can use simple sub-string matches (such as "XYZ contains 'X'") or complex Regular Expressions (such as `^X[a-zA-Z]{2}$`) to search for text patterns within the input text.  If a match is found or not found, you can specify what action should be taken, including "Continue" or "Raise violation and continue", which allows you to perform subsequent conditional checks.
+
+Both the search string/regex pattern and the "Custom violation message" can make use of any Variables that are defined within the Rule, by enclosing the Variable "identifier" inside of `<>` symbols.  For example, a Variable with the identifier `_Hostname` can be used in a search string, regular expression or Custom violation message by entering it as: `<_Hostname>`.  This causes the `_Hostname` variable value to be substituted into the string when the Condition check runs.
+
+In the sections below, we'll go into deep detail on how to create and customize Conditions.
+
+### Fields
+
+- **Sample conditions:** A prepopulated list of example Conditions that are provided for your use.
+- **Advanced settings toggle:** Enables the option to parse the input text as "blocks", requiring you to define a "Block start expression" (RegEx) and optionally a "Block end expression".  Each matched block can be passed on to the next Condition in your Rule for processing.
+- **Scope:** Select from a short list of available inputs which currently include:
+  - `Configuration`: The device's current running configuration.
+  - `Device command outputs`: Uses the output from a "show" command as the input for the condition.  Selecting this option causes the `Show command` text box to appear below, which allows you to enter any valid Show command that can be run on the target device(s).
+  - `Device properties`: Provides a short list of device properties (collected by Catalyst Center) to use as input.  Selecting this option causes the `Property` dropdown menu to appear.  Currently, you can choose from: `Device name`, `IP address`, `OS name`, `OS version`.
+  - `Previously matched blocks:` Uses the matched block of text from the previous Condition as the input.  This option ***also*** allows you to parse the input in blocks.
+- **Parse as blocks:** This checkbox, if checked, will cause the `Block start expression` and `Block end expression` text boxes to appear below.  These text boxes accept Regular Expression strings to allow the Condition to break up the input text into one or more separate "blocks", which can then be parsed individually, in a loop.
+  > *Only visible if the "Advanced settings toggle" is switched on.*
+  - **Advanced block options:** This link will open a modal dialog box, when clicked, and present you with the following options:
+    - `Raise violation if ANY block has a violation`: Has two sub-options, allowing you to decide if a violation alert should be raised for *every* block that has a violation, or if all violating blocks should be aggregated into a single violation alert.
+    - `Raise violation only if ALL blocks have a violation`: Only one violation will be raised for the entire Rule, and all blocks must have a violation.
+- **Operator:** Allows you to choose from a short list of methods for evaluating the input text against your search or evaluation statement:
+  - `Contains the string`: A simple sub-string search, which just looks for the presence of your search string within the input text.
+  - `Does not contain the string`: Opposite of `Contains the string`; this will be triggered if the sub-string is NOT found in the input text.
+  - `Matches the expression`: A Regular Expression string which will match the text pattern you are looking for in the input text.
+  - `Does not match the expression`: Opposite of `Matches the expression`; this will be triggered if the Regular Expression string does not match the input text.
+  - `Evaluate expression`: Allows the use of the following comparison operators to create evaluation expressions: `>`, `>=`, `<`, `<=`, `==`, `matches`.
+    - Expression statements must be simple string or numerical comparisons, such as `<_IOS_Version> matches 17.15.3` or `<_Exec_Timeout> <= 30`.
