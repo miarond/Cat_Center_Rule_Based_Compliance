@@ -2,7 +2,7 @@
 
 In Catalyst Center v3.1.5 and above, the new Rule-Based Compliance policy feature was added to address the need for custom, granular, regex-based configuration introspection to ensure devices are in compliance with customers' standards.  This feature is very similar to Cisco Prime Infrastructure's Configuration Compliance Auditing feature, which was the original basis for the feature request in Catalyst Center.
 
-In this repository, we will describe the functionality, limitations, and detail specific example policies to help you understand how to leverage Rules-Based Compliance in your own Catalyst Center environment.
+In this repository, we will describe the functionality, limitations, and detail specific example policies to help you understand how to leverage Rule-Based Compliance in your own Catalyst Center environment.
 
 # Table of Contents
 
@@ -20,6 +20,7 @@ In this repository, we will describe the functionality, limitations, and detail 
   - [Conditions](#conditions)
     - [Fields](#fields)
 - [Regular Expressions](#regular-expressions)
+  - [Key RegEx Concepts](#key-regex-concepts)
 
 [⤴️ ToC](#table-of-contents)
 
@@ -32,7 +33,7 @@ In this repository, we will describe the functionality, limitations, and detail 
 Recommended capacity limitations:
 
 | Category | System Limits | Individual Limits |
-| -------- | ------------- | ----------------- |
+|:-------- |:------------- |:----------------- |
 | Policy   | 500           | N/A               |
 | Rules    | 5000          | Max 20 per Policy |
 | Variables | 12,500 (50% of rules use variables, avg. 5 per rule) | Max 10 per Rule |
@@ -269,7 +270,7 @@ It is also important to understand that there are different implementations of R
 RegEx has many, many special characters or character combinations that the engine interprets to build the pattern.  Below is a table of the most commonly used:
 
 | Symbol | Type | Description | Example Pattern | Example Match |
-|--------------|------|-------------|-----------------|---------------|
+|:-------|:-----|:------------|:----------------|:--------------|
 | `^` | Anchor / Boundary | Start of a string; this signifies the very beginning position of the input string. | `^test.*` | `test_string` |
 | `$` | Anchor / Boundary | End of a string; signifies the end position of the input string. | `^test_string$` | `test_string` |
 | `.` | Character | Any character ***except*** a line break (`\n` or `\r\n`) | `^test.string$` | `test_string`, `test-string` |
