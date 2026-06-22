@@ -255,6 +255,10 @@ That said, Regular Expression language can seem archane and can be very difficul
 
 It is also important to understand that there are different implementations of Regular Expression language for different platforms - primarily: POSIX (simple regex) and Perl (advanced regex).  It can be difficult to know what version of Regular Expression language you are working with on a particular system, because that information is difficult to find; normally you figure this out by discovering that more advanced RegEx patterns simply don't work, which is an indication that the system is using the older POSIX implementation.  The best solution to this problem is to keep your Regular Expression patterns as simple as possible.
 
+[⤴️ ToC](#table-of-contents)
+
+---
+
 ### Key RegEx Concepts
 
 - RegEx patterns are applied to strings of text, and return a Boolean (True/False) value based on whether the pattern was found or not found in the text string.
@@ -273,3 +277,28 @@ RegEx has many, many special characters or character combinations that the engin
 | `*` | Quantifier | Matches ***zero or more*** of the ***preceding*** character. | `^test.*` | `test_string`, `test-string`, `test` |
 | `+` | Quantifier | Matches ***one or more*** of the ***preceding*** character. | `^test.+` | `test_string`, `test-string`, `tests` |
 | `?` | Quantifier | Matches ***zero or one*** of the ***preceding*** character. | `^test.?` | `test_`, `test`, `tests` |
+| `{x,y}` | Quantifier | Specifies the minimum number of the ***preceding*** character (`x`), and the maximum number (`y`). | `A{1,3}` | `A`, `AA`, `AAA` |
+| `{x}` or `{x,}` | Quantifier | Specifies either *exactly* the number (`{x}`) or at *least* the number (`{x,}`) of the preceding character to match. | `A{2}` or `A{2,}` | `AA` or `AA`, `AAA`, `AAAA`, etc. |
+| `\d` | Character | Matches a numerical digit, 0 through 9. (The character `\D` matches any character that is NOT a digit) | `\d{3}` | `666`, `999`, `123`, `456` |
+| `\w` | Character | Matches any "word" character, which includes ASCII letters, digits or the underscore. (The `\W` character matches any character that is NOT a "word" character) | `\w.+` | `apple`, `tree`, `Cisco123` |
+| `\s` | Character | Matches any whitespace character, which is typically: space, tab, newline, carriage return, vertical tab. (The `\S` character matches any character that is NOT whitespace). Also, `\t` matches a tab, `\r` matches a carriage return, and `\n` matches a newline. | `^\sdescription\s.*` | ` description IP Phone`, ` description ` |
+| `[...]` | Class | A set of square brackets (`[]`) containing any number of characters, digits or symbols is a "Character Class". This specifies which characters, digits or symbols are allowed to be matched; in this example, we will specify that any upper or lowercase letter, or any digit, is valid. | `[a-zA-Z0-9]{4}` | `ABCD`, `abcd`, `a1b2`, `1234` |
+| `(...)` | Logic | A set of parenthesis (`()`) containing any set of letters, numbers or symbols is a "Capture Group". Capture groups are captured in memory and can be referred to later, much like a variable, using a backslash followed by the numerical order of the captured group. | `^(123)(Cisco)_\2\1` | `123Cisco_Cisco123` |
+| `\|` | Logic | The pipe character (`\|`) is the OR operator, which evaluates True if either the value on the left **OR** the value on the right is matched. | `^C(at\|isco\|++)$` | `Cat`, `Cisco`, `C++` |
+
+As you can see, the Regular Expression language is not very intuitive and can be difficult to learn, much less master, without lots of practice.  However, most use cases for Regular Expressions end up being very simple because it's not often that we need to match a massive amount of content contained inside a string of text.
+
+The easiest way to work with Regular Expressions is to study the string you want to match and ask yourself: 
+
+> *"What makes this string unique?"*
+
+> *"How could I pick it out of a large block of text?"*
+
+When we're talking about Cisco device configuration files, or the output of `show` commands, it gets even easier because we already understand the format of the text and we can anticipate the output of a `show` command.  In the next section, we'll work through some examples to help solidify your understanding of Regular Expressions.
+
+[⤴️ ToC](#table-of-contents)
+
+---
+
+### RegEx Examples
+
