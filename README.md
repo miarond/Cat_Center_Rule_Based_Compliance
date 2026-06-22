@@ -18,6 +18,8 @@ In this repository, we will describe the functionality, limitations, and detail 
     - [Interface](#interface)
     - [IP Mask](#ip-mask)
   - [Conditions](#conditions)
+    - [Fields](#fields)
+- [Regular Expressions](#regular-expressions)
 
 [⤴️ ToC](#table-of-contents)
 
@@ -201,21 +203,73 @@ In the sections below, we'll go into deep detail on how to create and customize 
 ### Fields
 
 - **Sample conditions:** A prepopulated list of example Conditions that are provided for your use.
-- **Advanced settings toggle:** Enables the option to parse the input text as "blocks", requiring you to define a "Block start expression" (RegEx) and optionally a "Block end expression".  Each matched block can be passed on to the next Condition in your Rule for processing.
+- **Advanced settings toggle:** Enables the option to parse the input text as "blocks", requiring you to define a "Block start expression" (RegEx) and optionally a "Block end expression".  Each matched block can be passed on to the next Condition in your Rule for processing.  Also adds the "Scope" options `Device properties` and `Previously matched blocks`, and breaks out the "Action" section into `Match` and `Does not match` sections.
 - **Scope:** Select from a short list of available inputs which currently include:
   - `Configuration`: The device's current running configuration.
   - `Device command outputs`: Uses the output from a "show" command as the input for the condition.  Selecting this option causes the `Show command` text box to appear below, which allows you to enter any valid Show command that can be run on the target device(s).
   - `Device properties`: Provides a short list of device properties (collected by Catalyst Center) to use as input.  Selecting this option causes the `Property` dropdown menu to appear.  Currently, you can choose from: `Device name`, `IP address`, `OS name`, `OS version`.
   - `Previously matched blocks:` Uses the matched block of text from the previous Condition as the input.  This option ***also*** allows you to parse the input in blocks.
 - **Parse as blocks:** This checkbox, if checked, will cause the `Block start expression` and `Block end expression` text boxes to appear below.  These text boxes accept Regular Expression strings to allow the Condition to break up the input text into one or more separate "blocks", which can then be parsed individually, in a loop.
-  > *Only visible if the "Advanced settings toggle" is switched on.*
+  > :information_source:*Only visible if the "Advanced settings toggle" is switched on.*
   - **Advanced block options:** This link will open a modal dialog box, when clicked, and present you with the following options:
     - `Raise violation if ANY block has a violation`: Has two sub-options, allowing you to decide if a violation alert should be raised for *every* block that has a violation, or if all violating blocks should be aggregated into a single violation alert.
     - `Raise violation only if ALL blocks have a violation`: Only one violation will be raised for the entire Rule, and all blocks must have a violation.
 - **Operator:** Allows you to choose from a short list of methods for evaluating the input text against your search or evaluation statement:
   - `Contains the string`: A simple sub-string search, which just looks for the presence of your search string within the input text.
   - `Does not contain the string`: Opposite of `Contains the string`; this will be triggered if the sub-string is NOT found in the input text.
-  - `Matches the expression`: A Regular Expression string which will match the text pattern you are looking for in the input text.
-  - `Does not match the expression`: Opposite of `Matches the expression`; this will be triggered if the Regular Expression string does not match the input text.
+  - `Matches the expression`: A Regular Expression pattern which will match the text string you are looking for in the input text.
+  - `Does not match the expression`: Opposite of `Matches the expression`; this will be triggered if the Regular Expression pattern does NOT match the input text.
   - `Evaluate expression`: Allows the use of the following comparison operators to create evaluation expressions: `>`, `>=`, `<`, `<=`, `==`, `matches`.
     - Expression statements must be simple string or numerical comparisons, such as `<_IOS_Version> matches 17.15.3` or `<_Exec_Timeout> <= 30`.
+- **Actions:** The Actions section allows you to choose what action the Condition statement should take in the event of a match, or no match.  The available options for both "Match" and "Does not match" are the same, and are detailed below:
+  - **Action:**
+    - `Continue`: Simply continue on to the next Condition statement without taking any action.
+    - `Do not raise a violation`: Take the action of *NOT* raising a violation.  Exit this loop iteration and begin the next (if parsing as blocks), or end the conditional check workflow and move on.
+    - `Raise a violation`: Take the action of raising a violation alert, then either exit this loop iteration and begin the next (if parsing as blocks), or end the conditional check workflow and move on.
+    - `Raise a violation and continue`: Take the action of raising a violation alert and then continue on to the next Condition check in the Rule sequence.
+  - **Violation Severity:** Choose the severity level to apply to violations alerts for this Condition statement.  You can select from the following list: `Critical`, `Major`, `Minor`, `Warning`, `Information`
+  - **Custom violation message:** This optional field allows you to specify a custom message that should accompany any alerts that are generated by the Condition.  
+    - :bulb:**Important Note:** This message *can* reference Variables and/or RegEx match groups from any of the previously run Condition statements (more on how to use RegEx match groups later...).
+    - :information_source: Custom violation messages are limited to **100 characters** in length.
+
+  > :exclamation:*NOTE: The "Match" and "Does not match" Action selection are not allowed to conflict with each other.  In order words, Catalyst Center will not allow you to generate a Violation alert for BOTH scenarios - only one condition outcome can generate an alert.  Likewise, if you attempt to create a new Condition following one which does NOT have a Continue Action, you will receive a warning message indicating that this new Condition is "unreachable" and can not be created.*
+
+[⤴️ ToC](#table-of-contents)
+
+---
+
+## Regular Expressions
+
+Regular Expressions (aka RegEx), as they are known today, are sequences of special (ASCII) characters which are interpreted by the regular expression engine and used to search for (and match) patterns of characters in text strings.  Essentially, they're a special language used to define text "patterns" so that computer programs can recognize matching strings of text as they parse through tons of lines of content.  The concept of Regular Expressions has been around since the early 1950's but they entered popular use in computer programming in 1968, and they have remained a powerful tool ever since.
+
+That said, Regular Expression language can seem archane and can be very difficult to understand, until you have built up enough experience in using it.  Thankfully, there are many online "cheatsheets" and tools available for you to learn on-the-fly:
+
+- https://regexr.com/ (By far the most useful tool online for working with and learning regular expressions)
+- https://regex101.com/
+- https://regexone.com/
+- https://www.rexegg.com/regex-quickstart.php
+- https://www.w3schools.com/js/js_regexp.asp
+- https://www.w3schools.com/python/python_regex.asp
+
+...and many, many more.
+
+It is also important to understand that there are different implementations of Regular Expression language for different platforms - primarily: POSIX (simple regex) and Perl (advanced regex).  It can be difficult to know what version of Regular Expression language you are working with on a particular system, because that information is difficult to find; normally you figure this out by discovering that more advanced RegEx patterns simply don't work, which is an indication that the system is using the older POSIX implementation.  The best solution to this problem is to keep your Regular Expression patterns as simple as possible.
+
+### Key RegEx Concepts
+
+- RegEx patterns are applied to strings of text, and return a Boolean (True/False) value based on whether the pattern was found or not found in the text string.
+- A separate text rendering program is needed to "present" the text to the RegEx pattern.  This can be a text editor, a stream reader (`sed`, `awk` or `grep`, for instance), or a programming language capable of reading text (JavaScript or Python, for example).
+- Text is normally parsed one line at a time, with the "Newline" (`\n`) or Carriage Return/Newline (`\r\n`) acting as the delimiter between lines.
+- RegEx patterns can be configured to capture multiple lines of text and search through them as a block.
+
+RegEx has many, many special characters or character combinations that the engine interprets to build the pattern.  Below is a table of the most commonly used:
+
+| Symbol | Type | Description | Example Pattern | Example Match |
+|--------------|------|-------------|-----------------|---------------|
+| `^` | Anchor / Boundary | Start of a string; this signifies the very beginning position of the input string. | `^test.*` | `test_string` |
+| `$` | Anchor / Boundary | End of a string; signifies the end position of the input string. | `^test_string$` | `test_string` |
+| `.` | Character | Any character ***except*** a line break (`\n` or `\r\n`) | `^test.string$` | `test_string`, `test-string` |
+| `\` | Character | Escape symbol used to "escape" any special character that should appear in a string | `^test\.string$` | `test.string` | 
+| `*` | Quantifier | Matches ***zero or more*** of the ***preceding*** character. | `^test.*` | `test_string`, `test-string`, `test` |
+| `+` | Quantifier | Matches ***one or more*** of the ***preceding*** character. | `^test.+` | `test_string`, `test-string`, `tests` |
+| `?` | Quantifier | Matches ***zero or one*** of the ***preceding*** character. | `^test.?` | `test_`, `test`, `tests` |
