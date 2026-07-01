@@ -207,7 +207,7 @@ An IP Mask data type is just a Subnet Mask in IPv4 format.  "IP mask" data types
 
 Conditions are the heart of a Rule-Based Compliance Policy in Catalyst Center.  They allow you to parse the text contained in whatever Scope you choose as your input, search for string patterns that you define, and take action based on the results.  Conditions can use simple sub-string matches (such as "XYZ contains 'X'") or complex Regular Expressions (such as `^X[a-zA-Z]{2}$`) to search for text patterns within the input text.  If a match is found or not found, you can specify what action should be taken, including "Continue" or "Raise violation and continue", which allows you to perform subsequent conditional checks.
 
-Both the search string/regex pattern and the "Custom violation message" can make use of any Variables that are defined within the Rule, by enclosing the Variable "identifier" inside of `<>` symbols.  For example, a Variable with the identifier `_Hostname` can be used in a search string, regular expression or Custom violation message by entering it as: `<_Hostname>`.  This causes the `_Hostname` variable value to be substituted into the string when the Condition check runs.
+Both the search string/regex pattern and the "Custom violation message" can make use of any Variables that are defined within the Rule, by enclosing the Variable "identifier" inside of `<>` symbols.  For example, a Variable with the identifier `_Hostname` can be used in a search string, evaluation expression or custom violation message by entering it as: `<_Hostname>`.  This causes the `_Hostname` variable value to be substituted into the string when the Condition check runs.
 
 In the sections below, we'll go into deep detail on how to create and customize Conditions.
 
@@ -251,7 +251,7 @@ In the sections below, we'll go into deep detail on how to create and customize 
 
 ## Regular Expressions
 
-Regular Expressions (aka RegEx), as they are known today, are sequences of special (ASCII) characters which are interpreted by the regular expression engine and used to search for (and match) patterns of characters in text strings.  Essentially, they're a special language used to define text "patterns" so that computer programs can recognize matching strings of text as they parse through tons of lines of content.  The concept of Regular Expressions has been around since the early 1950's but they entered popular use in computer programming in 1968, and they have remained a powerful tool ever since.
+Regular Expressions (aka RegEx), as they are known today, are sequences of special (ASCII) characters which are interpreted by the regular expression engine and used to search for, and match, patterns of characters in text strings.  Essentially, they're a special language used to define text "patterns" so that computer programs can recognize matching strings of text as they parse through tons of lines of content.  The concept of Regular Expressions has been around since the early 1950's but they entered popular use in computer programming in 1968, and they have remained a powerful tool ever since.
 
 That said, Regular Expression language can seem archane and can be very difficult to understand, until you have built up enough experience in using it.  Thankfully, there are many online "cheatsheets" and tools available for you to learn on-the-fly:
 
@@ -264,7 +264,7 @@ That said, Regular Expression language can seem archane and can be very difficul
 
 ...and many, many more.
 
-It is also important to understand that there are different implementations of Regular Expression language for different platforms - primarily: POSIX (simple regex) and Perl (advanced regex).  It can be difficult to know what version of Regular Expression language you are working with on a particular system, because that information is difficult to find; normally you figure this out by discovering that more advanced RegEx patterns simply don't work, which is an indication that the system is using the older POSIX implementation.  The best solution to this problem is to keep your Regular Expression patterns as simple as possible.
+It is also important to understand that there are different implementations of Regular Expression language for different platforms - primarily: POSIX (simple regex) and Perl (advanced regex).  It can be difficult to know what version of Regular Expression language you are working with on a particular system, because that information is difficult to find.  Normally you figure this out by discovering that more advanced RegEx patterns simply don't work, which is an indication that the system is using the older POSIX implementation.  The best solution to this problem is to keep your Regular Expression patterns as simple as possible.
 
 [⤴️ ToC](#table-of-contents)
 
@@ -295,7 +295,7 @@ RegEx has many, many special characters or character combinations that the engin
 | `\s` | Character | Matches any whitespace character, which is typically: space, tab, newline, carriage return, vertical tab. (The `\S` character matches any character that is NOT whitespace). Also, `\t` matches a tab, `\r` matches a carriage return, and `\n` matches a newline. | `^\sdescription\s.*` | ` description IP Phone`, ` description ` |
 | `[...]` | Class | A set of square brackets (`[]`) containing any number of characters, digits or symbols is a "Character Class". This specifies which characters, digits or symbols are allowed to be matched; in this example, we will specify that any upper or lowercase letter, or any digit, is valid. | `[a-zA-Z0-9]{4}` | `ABCD`, `abcd`, `a1b2`, `1234` |
 | `(...)` | Logic | A set of parenthesis (`()`) containing any set of letters, numbers or symbols is a "Capture Group". Capture groups are captured in memory and can be referred to later, much like a variable, using a backslash followed by the numerical order of the captured group. | `^(123)(Cisco)_\2\1` | `123Cisco_Cisco123` |
-| `\|` | Logic | The pipe character (`\|`) is the OR operator, which evaluates True if either the value on the left **OR** the value on the right is matched. | `^C(at\|isco\|++)$` | `Cat`, `Cisco`, `C++` |
+| `\|` | Logic | The pipe character (`\|`) is the OR operator, which evaluates True if either the value on the left **OR** the value on the right is matched. | `^C(at\|isco\|\+\+)$` | `Cat`, `Cisco`, `C++` |
 
 As you can see, the Regular Expression language is not very intuitive and can be difficult to learn, much less master, without lots of practice.  However, most use cases for Regular Expressions end up being very simple because it's not often that we need to match a massive amount of content contained inside a string of text.
 
