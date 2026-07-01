@@ -327,6 +327,11 @@ interface GigabitEthernet1/0/35
  authentication control-direction in
  device-tracking attach-policy IPDT_POLICY
 !
+interface GigabitEthernet1/0/48
+ switchport access vlan 172
+ switchport mode access
+ device-tracking attach-policy IPDT_POLICY
+!
 ```
 
 Conditions:
@@ -359,7 +364,7 @@ Conditions:
     - Custom violation message: `Interface <1.1> is missing "authentication control-direction in"`
       > :information_source: *Note: Here we are referencing capture group `1.1`, which refers to Condition #1, Capture Group #1.  This will contain the interface's name.  If we had a second capture group defined in Condition #1 it would be referenced by `1.2`, or if there was a capture group defined in Condition #2 it would be referenced by `2.1`, and so on.*
 
-Test Result:
+Example Result:
 
 ![dot1x_violation_message_test.png](/assets/dot1x_violation_message_test.png)
 
@@ -497,6 +502,7 @@ Conditions:
     - Does not match action: `Do not raise a violation`
 
 Example Result:
+> *Alert output is invalid in this example, only for demonstration purposes.*
 
 ![cert_expiration_violation_test.png](/assets/cert_expiration_violation_test.png)
 
@@ -509,10 +515,10 @@ Source Text:
 ```
 switch#show run | section line
 line con 0
- exec-timeout 15 0
+ exec-timeout 60 0
  stopbits 1
 line vty 0 4
- exec-timeout 60 0
+ exec-timeout 30 0
  authorization exec TACACS_POLICY
  login authentication TACACS_POLICY
  transport input all
@@ -568,8 +574,9 @@ Conditions:
       > :information_source: *Note: If condition #2 does not match, a violation will be raised for a missing `exec-timeout` command however, condition #3 will still run.  This will result in a second violation being raised for the timeout value, even though the configuration is not present: `line aux 0 has a timeout of <2.1>m and <2.2>s, which is greater than the desired value: 30m`  This is a quirk caused by condition #2's `Raise a violation and continue` setting, which is required for condition #3 to run if any previous violations are found.*
 
 Example Result:
+> *Alert output is invalid in this example, only for demonstration purposes.*
 
-![cert_expiration_violation_test.png](/assets/cert_expiration_violation_test.png)
+![exec_timeout_value_violation.png](/assets/exec_timeout_value_violation.png)
 
 [⤴️ ToC](#table-of-contents)
 
