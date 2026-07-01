@@ -303,3 +303,184 @@ When we're talking about Cisco device configuration files, or the output of `sho
 
 ### RegEx Examples
 
+Below we will illustrate some practical examples of Regular Expressions to demonstrate their usage:
+
+
+#### Example 1 
+Check interfaces for `authentication control-direction in`
+
+Source Text:
+```
+interface GigabitEthernet1/0/35
+ switchport access vlan 172
+ switchport mode access
+ authentication control-direction in
+ device-tracking attach-policy IPDT_POLICY
+!
+```
+
+Conditions:
+
+1. Select interface blocks
+    - Scope: `Configuration`
+    - Parse as blocks: Checked
+    - Block start expression: `^interface (.+)`
+    - Block end expression: `^!`
+    - Operator: `Matches the expression`
+    - Value: `^interface (.+)$`
+      - *Note: Using the `(.+)` Capture Group expression allows us to capture the name of the interface for use later in a custom violation message.  This is necessary because the default violation message won't provide any indication of which interface it is related to.*
+    - Match action: `Continue`
+    - Does not match action: `Do not raise a violation`
+2. Match only Access Mode interfaces
+    - Scope: `Previously matched blocks` (enable "Advanced settings")
+    - Parse as blocks: Unchecked
+    - Operator: `Matches the expression`
+    - Value: `^ switchport mode access$`
+    - Match action: `Continue`
+    - Does not match action: `Do not raise a violation`
+3. Raise violation for "Does not match" interfaces that are missing the 802.1x command
+    - Scope: `Previously matched blocks` (enable "Advanced settings")
+    - Parse as blocks: Unchecked
+    - Operator: `Matches the expression`
+    - Value: `^ authentication control-direction in$`
+    - Match action: `Do not raise a violation`
+    - Does not match action: `Raise a violation`
+    - Violation severity: Select an appropriate severity level
+    - Custom violation message: `Interface <1.1> is missing "authentication control-direction in"`
+      - *Note: Here we are referencing capture group `1.1`, which refers to Condition #1, Capture Group #1.  This will contain the interface's name.  If we had a second capture group defined in Condition #1 it would be referenced by `1.2`, or if there was a capture group defined in Condition #2 it would be referenced by `2.1`, and so on.*
+
+Test Result:
+
+![dot1x_violation_message_test.png](/assets/dot1x_violation_message_test.png)
+
+#### Example 2
+Check device PKI certificates for upcoming expiration (`show crypto pki certificate`)
+
+Source Text (truncated):
+```
+Certificate
+  Status: Available
+  Certificate Serial Number (hex): ABCDEF0123456789
+  Certificate Usage: General Purpose
+  Issuer:
+    cn=sdn-network-infra-ca
+  Subject:
+    Name: switch.example.com
+    cn=C9300-48P_ABCD1234_sdn-network-infra-iwan
+    hostname=switch.example.com
+  CRL Distribution Points:
+    http://example.com
+  Validity Date:
+    start date: 00:51:07 EST Jun 10 2026
+    end   date: 00:51:07 EST Jun 10 2027
+    renew date: 00:51:07 EST Mar 29 2027
+  Associated Trustpoints: sdn-network-infra-iwan
+  Storage: nvram:sdn-network-example1.cer
+
+CA Certificate
+  Status: Available
+  Certificate Serial Number (hex): ABCDEF0123456789ABCDEF0123456789
+  Certificate Usage: Signature
+  Issuer:
+    cn=sdn-network-infra-ca
+  Subject:
+    cn=sdn-network-infra-ca
+  Validity Date:
+    start date: 02:24:53 EST Sep 27 2025
+    end   date: 02:24:52 EST Sep 27 2045
+  Associated Trustpoints: sdn-network-infra-iwan
+  Storage: nvram:sdn-network-example2.cer
+```
+
+Conditions:
+
+1. Capture and parse current date from device
+    - Scope: `Device command outputs`
+    - Show command: `show clock` (You'll need to add this to the custom command list)
+    - Operator: `Matches the expression`
+    - Value: `^([\d:\.]+)\s(\w+)\s(\w+)\s(\w+)\s(\d+)\s(\d+)$`
+      - Example: 
+        ```
+        switch#show clock
+        15:39:32.008 EST Wed Jul 1 2026
+        ```
+      - Capture Groups:
+        ```
+        (15:39:32.008) (EST) (Wed) (Jul) (1) (2026)
+             1.1        1.2   1.3   1.4  1.5   1.6
+        ```
+    - Match action: `Continue`
+    - Does not match action: `Do not raise a violation`
+2. Capture and parse output of `show crypto pki certificate`
+    - Scope: `Device command outputs` (enable "Advanced settings")
+    - Show command: `show crypto pki certificate` (You'll need to add this to the custom command list)
+    - Parse as blocks: Checked
+    - Operator: `Matches the expression`
+    - Value: `(.*)`
+      - *Note: This just captures all of the command output, but isn't used in this Rule.*
+    - Match action: `Continue`
+    - Does not match action: `Do not raise a violation`
+3. Capture certificate serial number for later reference
+    - Scope: `Previously matched blocks` (enable "Advanced settings")
+    - Parse as blocks: Unchecked
+    - Operator: `Matches the expression`
+    - Value: `^.*[Cc]ertificate Serial Number.*: ([0-9a-fA-F]+)$`
+      - Example:
+        ```
+        Certificate
+          Status: Available
+          Certificate Serial Number (hex): ABCDEF0123456789
+        ```
+      - Capture Groups:
+        ```
+        Certificate Serial Number (hex): (ABCDEF0123456789)
+                                                3.1
+        ```
+    - Match action: `Continue`
+    - Does not match action: `Do not raise a violation`
+4. Capture certificate end date
+    - Scope: `Previously matched blocks` (enable "Advanced settings")
+    - Parse as blocks: Unchecked
+    - Operator: `Matches the expression`
+    - Value: `^\s*end\s+date:\s?([0-9:\.]+)\s(\w+)\s(\w+)\s(\d+)\s(\d+)$`
+      - Example:
+        ```
+          Validity Date:
+            start date: 00:51:07 EST Jun 10 2026
+            end   date: 00:51:07 EST Jun 10 2027
+            renew date: 00:51:07 EST Mar 29 2027
+        ```
+      - Capture Groups:
+        ```
+        end   date: (00:51:07) (EST) (Jun) (10) (2027)
+                       4.1      4.2   4.3   4.4  4.5
+        ```
+    - Match action: `Continue`
+    - Does not match action: `Do not raise a violation`
+4. Compare month and year to `show clock` output
+    - Scope: `Previously matched blocks` (enable "Advanced settings")
+    - Parse as blocks: Unchecked
+    - Operator: `Evaluate expression`
+    - Value: `<4.3> matches <1.4> & <4.5> matches <1.6>`
+      - Example:
+
+        *`show clock`*
+        ```
+        15:39:32.008 EST Wed Jul 1 2026
+        ```
+        *`show crypto pki certificate`*
+        ```
+        end   date: 00:51:07 EST Jun 10 2027
+        ```
+      - Expression:
+        ```
+        (Jun) matches (Jul) AND (2027) matches (2026)
+         4.3           1.4       4.5            1.6
+        ```
+      - Result: `False`
+        
+        *Note: This expression will evaluate `True` ONLY if the current month and current year match.*
+    - Match action: `Raise a violation`
+    - Violation severity: Choose an appropriate severity level
+    - Custom violation message: `Certificate <3.1> will expire soon! <4.3> <4.4> <4.5>`
+    - Does not match action: `Do not raise a violation`
