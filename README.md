@@ -4,6 +4,12 @@ In Catalyst Center v3.1.5 and above, the new Rule-Based Compliance policy featur
 
 In this repository, we will describe the functionality, limitations, and detail specific example policies to help you understand how to leverage Rule-Based Compliance in your own Catalyst Center environment.
 
+# Download the Examples
+
+:bulb: **Click this link to download the Example Policy from this tutorial!**
+
+[Example_Policy.json](/assets/Example_Policy.json)
+
 # Table of Contents
 
 - [Requirements & Limitations](#requirements--limitations)
@@ -357,6 +363,8 @@ Test Result:
 
 ![dot1x_violation_message_test.png](/assets/dot1x_violation_message_test.png)
 
+---
+
 #### Example 2
 Check device PKI certificates for upcoming expiration (`show crypto pki certificate`)
 
@@ -491,6 +499,8 @@ Conditions:
 Example Result:
 
 ![cert_expiration_violation_test.png](/assets/cert_expiration_violation_test.png)
+
+---
 
 #### Example 3 
 Check Console & VTY Lines for `exec-timeout` config

@@ -1,0 +1,256 @@
+{
+  "name" : "Example_Policy",
+  "description" : "A collection of example compliance rules that demonstrate this feature's capabilities.",
+  "rules" : [ {
+    "name" : "Check Certificate Expiration",
+    "description" : "Check the output of \"show crypto pki certificate\" and search for end dates that fall within the current month and year.",
+    "impact" : "",
+    "suggestedFix" : "",
+    "softwareType" : "IOS_XE",
+    "deviceTypes" : [ {
+      "deviceFamily" : "Routers"
+    }, {
+      "deviceFamily" : "Wireless Controller"
+    }, {
+      "deviceFamily" : "Switches and Hubs"
+    } ],
+    "conditions" : [ {
+      "scope" : "DEVICE_COMMAND_OUTPUT",
+      "showCommand" : "show clock",
+      "isBasicMode" : false,
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "^([\\d:\\.]+)\\s(\\w+)\\s(\\w+)\\s(\\w+)\\s(\\d+)\\s(\\d+)$",
+      "id" : "89af6243-2c76-400f-b5b8-4f4448876a09",
+      "name" : "Output of 'show clock' must match the expression '^([\\d:\\.]+)\\s(\\w+)\\s(\\w+)\\s(\\w+)\\s(\\d+)\\s(\\d+)$'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP"
+      },
+      "sequenceNumber" : 1
+    }, {
+      "scope" : "DEVICE_COMMAND_OUTPUT",
+      "showCommand" : "show crypto pki certificate",
+      "parseAsBlocks" : true,
+      "isBasicMode" : false,
+      "blockStartExpression" : "^.*[Cc]ertificate$",
+      "blockEndExpression" : "^$",
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "(.*)",
+      "id" : "80850b75-f6ea-48d8-a09e-26c686ccc67f",
+      "name" : "Selected blocks from the output of 'show crypto pki certificate' must match the expression '(.*)'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP"
+      },
+      "sequenceNumber" : 2
+    }, {
+      "scope" : "PREVIOUSLY_MATCHED_BLOCKS",
+      "isBasicMode" : false,
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "^.*[Cc]ertificate Serial Number.*: ([0-9a-fA-F]+)$",
+      "id" : "c196d947-3c07-44d6-b698-538d3709ca25",
+      "name" : "Previously matched blocks must match the expression '^.*[Cc]ertificate Serial Number.*: ([0-9a-fA-F]+)$'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP"
+      },
+      "sequenceNumber" : 3
+    }, {
+      "scope" : "PREVIOUSLY_MATCHED_BLOCKS",
+      "isBasicMode" : false,
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "^\\s*end\\s+date:\\s?([0-9:\\.]+)\\s(\\w+)\\s(\\w+)\\s(\\d+)\\s(\\d+)$",
+      "id" : "1ad16d0e-5dde-4232-8732-708a2b4d016b",
+      "name" : "Previously matched blocks must match the expression '^\\s*end\\s+date:\\s?([0-9:\\.]+)\\s(\\w+)\\s(\\w+)\\s(\\d+)\\s(\\d+)$'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP"
+      },
+      "sequenceNumber" : 4
+    }, {
+      "scope" : "PREVIOUSLY_MATCHED_BLOCKS",
+      "isBasicMode" : false,
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "EVALUATE_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "<4.3> matches <1.4> & <4.5> matches <1.6>",
+      "id" : "849044f1-0280-4ad5-996a-e6999180ae5f",
+      "name" : "Previously matched blocks must satisfy the expression '<4.3> matches <1.4> & <4.5> matches <1.6>'",
+      "action" : {
+        "matchAction" : "RAISE_VIOLATION_AND_STOP",
+        "matchViolationSeverity" : "CRITICAL",
+        "matchViolationMessageType" : "CUSTOM_MESSAGE",
+        "matchViolationMessage" : "Certificate <3.1> will expire soon! <4.3> <4.4> <4.5>",
+        "doesNotMatchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP"
+      },
+      "sequenceNumber" : 5
+    } ]
+  }, {
+    "name" : "Check for \"authentication control-direction in\"",
+    "description" : "Checks all access mode switch interfaces for the presence of the 802.1x authentication command \"authentication control-direction in\"",
+    "impact" : "",
+    "suggestedFix" : "",
+    "softwareType" : "IOS_XE",
+    "deviceTypes" : [ {
+      "deviceFamily" : "Switches and Hubs"
+    } ],
+    "conditions" : [ {
+      "scope" : "CONFIGURATION",
+      "parseAsBlocks" : true,
+      "isBasicMode" : false,
+      "blockStartExpression" : "^interface (.+)",
+      "blockEndExpression" : "^!",
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "^interface (.+)$",
+      "id" : "383e2850-1231-4756-ba68-61e81be48c1b",
+      "name" : "Selected configuration blocks must match the expression '^interface (.+)$'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP"
+      },
+      "sequenceNumber" : 1
+    }, {
+      "scope" : "PREVIOUSLY_MATCHED_BLOCKS",
+      "isBasicMode" : false,
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "^ switchport mode access$",
+      "id" : "6d9824db-5efb-4c81-92ea-23b964e03fdb",
+      "name" : "Previously matched blocks must match the expression '^ switchport mode access$'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP"
+      },
+      "sequenceNumber" : 2
+    }, {
+      "scope" : "PREVIOUSLY_MATCHED_BLOCKS",
+      "isBasicMode" : false,
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "^ authentication control-direction in$",
+      "id" : "4a96934c-1be1-46c0-8def-d50e56002493",
+      "name" : "Previously matched blocks must match the expression '^ authentication control-direction in$'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP",
+        "doesNotMatchAction" : "RAISE_VIOLATION_AND_STOP",
+        "doesNotMatchViolationSeverity" : "MINOR",
+        "doesNotMatchViolationMessageType" : "CUSTOM_MESSAGE",
+        "doesNotMatchViolationMessage" : "Interface <1.1> is missing \"authentication control-direction in\""
+      },
+      "sequenceNumber" : 3
+    } ]
+  }, {
+    "name" : "Exec Timeout Config",
+    "description" : "Checks the configuration of Console and VTY lines for the presence of exec-timeout configurations, and evaluates whether the timeout is longer than the specified limit.",
+    "impact" : "",
+    "suggestedFix" : "",
+    "softwareType" : "IOS_XE",
+    "deviceTypes" : [ {
+      "deviceFamily" : "Routers"
+    }, {
+      "deviceFamily" : "Wireless Controller"
+    }, {
+      "deviceFamily" : "Switches and Hubs"
+    } ],
+    "ruleParams" : [ {
+      "identifier" : "_Timeout",
+      "name" : "Timeout",
+      "description" : "Exec Timeout value in minutes for Console and VTY lines",
+      "dataType" : "INTEGER",
+      "mandatory" : true,
+      "selectionList" : [ ],
+      "defaultValue" : "30",
+      "scope" : "EXECUTION",
+      "listOfValues" : false,
+      "sequenceNumber" : 1,
+      "inputType" : "SINGLE_SELECT"
+    } ],
+    "conditions" : [ {
+      "scope" : "DEVICE_COMMAND_OUTPUT",
+      "showCommand" : "show run | section line",
+      "parseAsBlocks" : true,
+      "isBasicMode" : false,
+      "blockStartExpression" : "^line.+$",
+      "blockEndExpression" : "",
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "^(line.+)$",
+      "id" : "4b22bb24-8cfe-40e0-b77d-c893b7e57a99",
+      "name" : "Selected blocks from the output of 'show run | section line' must match the expression '^(line.+)$'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP"
+      },
+      "sequenceNumber" : 1
+    }, {
+      "scope" : "PREVIOUSLY_MATCHED_BLOCKS",
+      "isBasicMode" : false,
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "MATCHES_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "^\\sexec-timeout\\s(\\d+)\\s(\\d*)$",
+      "id" : "53ec0334-56fe-427e-b40f-5e82669e529b",
+      "name" : "Previously matched blocks must match the expression '^\\sexec-timeout\\s(\\d+)\\s(\\d*)$'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchAction" : "RAISE_VIOLATION_AND_CONTINUE",
+        "doesNotMatchViolationSeverity" : "MAJOR",
+        "doesNotMatchViolationMessageType" : "CUSTOM_MESSAGE",
+        "doesNotMatchViolationMessage" : "<1.1> is missing an exec-timeout configuration."
+      },
+      "sequenceNumber" : 2
+    }, {
+      "scope" : "PREVIOUSLY_MATCHED_BLOCKS",
+      "isBasicMode" : false,
+      "blockViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedBlock" : true,
+      "operator" : "EVALUATE_EXPRESSION",
+      "regexViolationCriteria" : "ANY_BLOCK_OR_VALUE_VIOLATES",
+      "oneViolationPerFailedInstance" : true,
+      "value" : "<2.1> >= <_Timeout>",
+      "id" : "1ce0f426-63a3-4074-a23d-9ca74033524f",
+      "name" : "Previously matched blocks must satisfy the expression '<2.1> >= <_Timeout>'",
+      "action" : {
+        "matchAction" : "DO_NOT_RAISE_VIOLATION_AND_STOP",
+        "doesNotMatchAction" : "RAISE_VIOLATION_AND_STOP",
+        "doesNotMatchViolationSeverity" : "MAJOR",
+        "doesNotMatchViolationMessageType" : "CUSTOM_MESSAGE",
+        "doesNotMatchViolationMessage" : "<1.1> has a timeout of <2.1>m and <2.2>s, which is greater than the desired value: <_Timeout>m"
+      },
+      "sequenceNumber" : 3
+    } ]
+  } ]
+}
