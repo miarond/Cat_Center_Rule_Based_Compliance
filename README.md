@@ -27,7 +27,7 @@ In this repository, we will describe the functionality, limitations, and detail 
     - [Fields](#fields)
 - [Regular Expressions](#regular-expressions)
   - [Key RegEx Concepts](#key-regex-concepts)
-  - [RegEx Examples](#regex-examples)
+  - [Rule & Condition Examples](#rule--condition-examples)
     - [Check Interface 802.1x Config](#example-1)
     - [Check Device Certificate Expiration](#example-2)
     - [Check Console & VTY Lines for Exec Timeout](#example-3)
@@ -311,9 +311,9 @@ When we're talking about Cisco device configuration files, or the output of `sho
 
 ---
 
-### RegEx Examples
+### Rule & Condition Examples
 
-Below we will illustrate some practical examples of Regular Expressions to demonstrate their usage:
+Below we will illustrate some practical examples of Rules & Conditions that use Regular Expressions, to demonstrate their usage:
 
 
 #### Example 1 
