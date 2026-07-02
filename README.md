@@ -272,7 +272,7 @@ It is also important to understand that there are different implementations of R
 
 ### Key RegEx Concepts
 
-- RegEx patterns are applied to strings of text, and return a Boolean (True/False) value based on whether the pattern was found or not found in the text string.
+- RegEx patterns are applied to strings of text, and return either the matched string(s) or an empty set, based on whether the pattern was found or not found in the text string.
 - A separate text rendering program is needed to "present" the text to the RegEx pattern.  This can be a text editor, a stream reader (`sed`, `awk` or `grep`, for instance), or a programming language capable of reading text (JavaScript or Python, for example).
 - Text is normally parsed one line at a time, with the "Newline" (`\n`) or Carriage Return/Newline (`\r\n`) acting as the delimiter between lines.
 - RegEx patterns can be configured to capture multiple lines of text and search through them as a block.
