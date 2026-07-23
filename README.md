@@ -27,10 +27,10 @@ In this repository, we will describe the functionality, limitations, and detail 
     - [Fields](#fields)
 - [Regular Expressions](#regular-expressions)
   - [Key RegEx Concepts](#key-regex-concepts)
-  - [Rule & Condition Examples](#rule--condition-examples)
-    - [Check Interface 802.1x Config](#example-1)
-    - [Check Device Certificate Expiration](#example-2)
-    - [Check Console & VTY Lines for Exec Timeout](#example-3)
+- [Rule & Condition Examples](#rule--condition-examples)
+  - [Check Interface 802.1x Config](#example-1)
+  - [Check Device Certificate Expiration](#example-2)
+  - [Check Console & VTY Lines for Exec Timeout](#example-3)
 
 [⤴️ ToC](#table-of-contents)
 
@@ -311,12 +311,12 @@ When we're talking about Cisco device configuration files, or the output of `sho
 
 ---
 
-### Rule & Condition Examples
+# Rule & Condition Examples
 
 Below we will illustrate some practical examples of Rules & Conditions that use Regular Expressions, to demonstrate their usage:
 
 
-#### Example 1 
+## Example 1 
 Check interfaces for `authentication control-direction in`
 
 Source Text:
@@ -370,7 +370,7 @@ Example Result:
 
 ---
 
-#### Example 2
+## Example 2
 Check device PKI certificates for upcoming expiration (`show crypto pki certificate`)
 
 Source Text (truncated):
@@ -474,7 +474,7 @@ Conditions:
         ```
     - Match action: `Continue`
     - Does not match action: `Do not raise a violation`
-4. Compare month and year to `show clock` output
+5. Compare month and year to `show clock` output
     - Scope: `Previously matched blocks` (enable "Advanced settings")
     - Parse as blocks: Unchecked
     - Operator: `Evaluate expression`
@@ -508,7 +508,7 @@ Example Result:
 
 ---
 
-#### Example 3 
+## Example 3 
 Check Console & VTY Lines for `exec-timeout` config
 
 Source Text:
