@@ -165,7 +165,7 @@ Interface data types are treated as Strings and have the three following options
 - First character must be a letter
 - Length must be 2 or more characters
 - No special characters are allowed, with the exception of: `/` `-` `_`
-- All forward slashes (`/`) must be proceeded AND followed by numerical digits only.  For example:
+- All forward slashes (`/`) must be preceeded AND followed by numerical digits only.  For example:
   - Valid: `GigabitEthernet1/0/1`
   - Invalid: `GigabitEthernet/0/B`
 
