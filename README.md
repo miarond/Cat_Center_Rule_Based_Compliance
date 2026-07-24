@@ -31,6 +31,10 @@ In this repository, we will describe the functionality, limitations, and detail 
   - [Check Interface 802.1x Config](#example-1)
   - [Check Device Certificate Expiration](#example-2)
   - [Check Console & VTY Lines for Exec Timeout](#example-3)
+- [Compliance Dashboards](#compliance-dashboards)
+  - [Compliance Overview](#compliance-overview)
+  - [Configuration Compliance](#configuration-compliance)
+  - [Compliance Settings](#compliance-settings)
 
 [⤴️ ToC](#table-of-contents)
 
@@ -368,6 +372,8 @@ Example Result:
 
 ![dot1x_violation_message_test.png](/assets/dot1x_violation_message_test.png)
 
+[⤴️ ToC](#table-of-contents)
+
 ---
 
 ## Example 2
@@ -506,6 +512,8 @@ Example Result:
 
 ![cert_expiration_violation_test.png](/assets/cert_expiration_violation_test.png)
 
+[⤴️ ToC](#table-of-contents)
+
 ---
 
 ## Example 3 
@@ -577,6 +585,46 @@ Example Result:
 > *Alert output is invalid in this example, only for demonstration purposes.*
 
 ![exec_timeout_value_violation.png](/assets/exec_timeout_value_violation.png)
+
+[⤴️ ToC](#table-of-contents)
+
+---
+
+# Compliance Dashboards
+
+Along with the new Rule-Based Compliance feature in Catalyst Center v3.1.5 and above, new dashboards have been added to make it easier to review the compliance status of devices managed in your network.  These new dashboards can be found under **Menu --> Policy --> Compliance section**:
+
+- **Compliance Overview**: Gives you an at-a-glance status of monitored compliance factors for devices in your network, based on the Site Hierarchy scope that you choose from the dropdown menu.
+- **Configuration Compliance**: Narrows the focus to just Rule-Based Compliance violations, allowing you to view them aggregated by device or by Policy, based on the Site Hierarchy scope that you choose from the dropdown menu.
+- **Compliance Settings**: Allows you to enable or disable the various compliance monitoring features and in some cases, specify the severity of alerts raised by those features.
+
+## Compliance Overview
+
+If there are any compliance violations active for the Site Hierarchy level that you've selected, the appropriate tile will be displayed on this page with a count of the number of violations.  Some tiles are clickable and will redirect to the appropriate page for more detail.
+
+![Compliance_Overview.png](/assets/Compliance_Overview.png)
+
+[⤴️ ToC](#table-of-contents)
+
+---
+
+## Configuration Compliance
+
+On the Configuration Compliance dashboard, you are able to view violations specific to device configuration (from both Rule-Based Compliance and Network Settings).  There are tabs to view the violations aggregated by device, or by Policy, which also allows you to view Acknowledged and Unacknowledged violations (at this time, Rule-Based Compliance violations can not be acknowledged).  You can also cross-link from the Devices tab to the specific device where a violation was found, and drill down deeper into the details.
+
+![Config_Compliance_Devices.png](/assets/Config_Compliance_Devices.png)
+
+![Config_Compliance_Violations.png](/assets/Config_Compliance_Violations.png)
+
+[⤴️ ToC](#table-of-contents)
+
+---
+
+## Compliance Settings
+
+On this screen, you are able to Enable or Disable the various compliance check features that Catalyst Center runs against your inventory devices.  In some instances, you can also adjust the severity level of any alerts that these compliance violations generate.
+
+![Compliance_Settings.png](/assets/Compliance_Settings.png)
 
 [⤴️ ToC](#table-of-contents)
 
